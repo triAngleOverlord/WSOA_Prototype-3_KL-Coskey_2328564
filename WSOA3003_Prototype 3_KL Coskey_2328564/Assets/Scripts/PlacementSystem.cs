@@ -18,7 +18,7 @@ public class PlacementSystem : MonoBehaviour
 
     [SerializeField] private GameObject gridVisualisation;
 
-    private GridData furnitureData, floorData;
+    private GridData furnitureData;
 
     private Renderer previewRender;
 
@@ -26,7 +26,6 @@ public class PlacementSystem : MonoBehaviour
     private void Start()
     {
         StopPlacement();
-        floorData = new ();
         furnitureData = new ();
         previewRender = cellIndicator.GetComponentInChildren<Renderer>();
     }
@@ -58,7 +57,8 @@ public class PlacementSystem : MonoBehaviour
         Vector3 mouseposition = inputManager.GetSelectedMapPosition();
         Vector3Int gridPos = grid.WorldToCell(mouseposition);
 
-        bool placementValidity = CheckPlacementValidity(gridPos, selectedObjectIndex);
+        //bool placementValidity = CheckPlacementValidity(gridPos, selectedObjectIndex);
+        bool placementValidity =furnitureData.CanPlaceObjectAt(gridPos, database.objectData[selectedObjectIndex].Size);
         if (placementValidity == false)
         {
             return;
@@ -66,14 +66,15 @@ public class PlacementSystem : MonoBehaviour
         GameObject newObject = Instantiate(database.objectData[selectedObjectIndex].Prefab);
         newObject.transform.position = grid.CellToWorld(gridPos);
         placedObjects.Add(newObject);
-        GridData selectedData = database.objectData[selectedObjectIndex].ID == 0 ? floorData : furnitureData;
-        selectedData.AddObjectAT(gridPos, database.objectData[selectedObjectIndex].Size, 
+        //GridData selectedData = database.objectData[selectedObjectIndex].ID == 0 ? floorData : furnitureData;
+        furnitureData.AddObjectAT(gridPos, database.objectData[selectedObjectIndex].Size, 
                                           database.objectData[selectedObjectIndex].ID,
                                           placedObjects.Count - 1);
-        Debug.Log(database.objectData[selectedObjectIndex].Size);
+        Debug.Log(grid.CellToWorld(gridPos));
 
     } //when press mouse button and over the grid going to instantiate new object place it in the position of the cell
 
+    /*
     private bool CheckPlacementValidity(Vector3Int gridPos, int selectedObjectIndex)
     {
         //GridData selectedData = furnitureData;
@@ -81,7 +82,7 @@ public class PlacementSystem : MonoBehaviour
         //if checking if we can place furniture onto floor
         //Debug.Log(selectedData.ToString());
         return selectedData.CanPlaceObjectAt(gridPos, database.objectData[selectedObjectIndex].Size);
-    }
+    }*/
 
     private void StopPlacement()
     {
@@ -99,7 +100,7 @@ public class PlacementSystem : MonoBehaviour
         Vector3 mouseposition = inputManager.GetSelectedMapPosition();
         Vector3Int gridPos = grid.WorldToCell(mouseposition);
         
-        bool placementValidity = CheckPlacementValidity(gridPos, selectedObjectIndex);
+        bool placementValidity = furnitureData.CanPlaceObjectAt(gridPos, database.objectData[selectedObjectIndex].Size);
         previewRender.material.color = placementValidity ? Color.white : Color.red;//changes the color if true or false
 
         mouseIndicator.transform.position = mouseposition;

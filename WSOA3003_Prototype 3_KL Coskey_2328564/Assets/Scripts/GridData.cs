@@ -28,7 +28,7 @@ public class GridData
         {
             for (int y = 0; y < OBJsize.y; y++)
             {
-                returnVal.Add(GRIDposition = new Vector3Int(x, 0, y));
+                returnVal.Add(GRIDposition + new Vector3Int(x, 0, y));
             }
         }
         return returnVal;
