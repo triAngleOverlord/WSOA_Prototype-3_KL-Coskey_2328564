@@ -34,6 +34,12 @@ public class previewSystem : MonoBehaviour
         if(size.x > 0 || size.y > 0)
         {
             cellIndicator.transform.localScale = new Vector3(size.y, size.x ,1);
+            if (size.x > 1)
+            {
+                cellIndicator.transform.GetChild(0).transform.localPosition = new Vector3(cellIndicator.transform.GetChild(0).transform.localPosition.x, cellIndicator.transform.GetChild(0).transform.localPosition.y + 0.2f, cellIndicator.transform.GetChild(0).transform.localPosition.z);
+            }
+            else
+                cellIndicator.transform.GetChild(0).transform.localPosition = new Vector3(0.542f, 0.028f, -0.05f);
             //cellIndicatorRenderer.material.mainTextureScale = size;//
         }
     }
@@ -67,7 +73,8 @@ public class previewSystem : MonoBehaviour
 
     private void ApplyFeedback(bool validity)
     {
-        Color c = validity ? Color.white : Color.red;
+        Color c = validity ? Color.white :Color.red ;
+        Debug.Log(c.ToString());
         cellIndicatorRenderer.material.color = c;
         c.a = 0.5f;
         previewMaterialInstance.color = c;
