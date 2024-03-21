@@ -21,14 +21,14 @@ public class GridData
         }
     }
 
-    private List<Vector3Int> CalacuatePositions(Vector3Int gridPosition, Vector2Int objectSize)
+    private List<Vector3Int> CalacuatePositions(Vector3Int GRIDposition, Vector2Int OBJsize)
     {
         List<Vector3Int> returnVal = new();
-        for (int x = 0; x < objectSize.x; x++)
+        for (int x = 0; x < OBJsize.x; x++)
         {
-            for (int y = 0; y < objectSize.y; y++)
+            for (int y = 0; y < OBJsize.y; y++)
             {
-                returnVal.Add(gridPosition = new Vector3Int(x, 0, y));
+                returnVal.Add(GRIDposition = new Vector3Int(x, 0, y));
             }
         }
         return returnVal;
@@ -39,8 +39,13 @@ public class GridData
         List<Vector3Int> positionToOccupy = CalacuatePositions(gridPosition, objectSize);
         foreach (var pos in positionToOccupy)
         {
+            //Debug.Log(pos);
             if (placedObjects.ContainsKey(pos))
+            {
+                //Debug.Log(placedObjects.ContainsKey(pos));
                 return false;
+            }
+                
         }
         return true;
 

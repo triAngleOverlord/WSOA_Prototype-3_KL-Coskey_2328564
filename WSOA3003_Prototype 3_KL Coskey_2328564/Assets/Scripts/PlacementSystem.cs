@@ -26,6 +26,7 @@ public class PlacementSystem : MonoBehaviour
     private void Start()
     {
         StopPlacement();
+        floorData = new ();
         furnitureData = new ();
         previewRender = cellIndicator.GetComponentInChildren<Renderer>();
     }
@@ -56,28 +57,29 @@ public class PlacementSystem : MonoBehaviour
         //Debug.Log("Place");
         Vector3 mouseposition = inputManager.GetSelectedMapPosition();
         Vector3Int gridPos = grid.WorldToCell(mouseposition);
+
         bool placementValidity = CheckPlacementValidity(gridPos, selectedObjectIndex);
         if (placementValidity == false)
         {
             return;
         }
         GameObject newObject = Instantiate(database.objectData[selectedObjectIndex].Prefab);
-        //Debug.Log(newObject);
         newObject.transform.position = grid.CellToWorld(gridPos);
         placedObjects.Add(newObject);
-        GridData selectedData = database.objectData[selectedObjectIndex].ID == 0 ? furnitureData : furnitureData;
+        GridData selectedData = database.objectData[selectedObjectIndex].ID == 0 ? floorData : furnitureData;
         selectedData.AddObjectAT(gridPos, database.objectData[selectedObjectIndex].Size, 
                                           database.objectData[selectedObjectIndex].ID,
                                           placedObjects.Count - 1);
+        Debug.Log(database.objectData[selectedObjectIndex].Size);
 
     } //when press mouse button and over the grid going to instantiate new object place it in the position of the cell
 
     private bool CheckPlacementValidity(Vector3Int gridPos, int selectedObjectIndex)
     {
-        Debug.Log("Checks for floor");
+        //GridData selectedData = furnitureData;
         GridData selectedData =database.objectData[selectedObjectIndex].ID == 0 ? floorData : furnitureData;////
         //if checking if we can place furniture onto floor
-
+        //Debug.Log(selectedData.ToString());
         return selectedData.CanPlaceObjectAt(gridPos, database.objectData[selectedObjectIndex].Size);
     }
 
