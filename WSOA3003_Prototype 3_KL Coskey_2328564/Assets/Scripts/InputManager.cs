@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class InputManager : MonoBehaviour
 {
@@ -9,6 +11,23 @@ public class InputManager : MonoBehaviour
     private Vector3 lastPosition; //of mouse
 
     [SerializeField] private LayerMask placementLayer; // which layer takes part in detection
+
+
+    public event Action OnClicked, OnExit;//inform other classes that the mouse has been clicked & exit placement mode when ESC is pressed
+
+    private void Update()
+    {
+        if(Input.GetMouseButtonDown(0))
+            OnClicked?.Invoke();//safely call action event and see if smth is listening for it
+
+        if(Input.GetKeyDown(KeyCode.Escape))
+            OnExit?.Invoke();
+    }
+
+    public bool IsPointerOverUI()
+            =>EventSystem.current.IsPointerOverGameObject();//return true/ false if pointer is over a UI object so when hovering over UI we cannot click
+
+    
 
     public Vector3 GetSelectedMapPosition()
     {
