@@ -14,13 +14,20 @@ public class PlacementSystem : MonoBehaviour
     [SerializeField] Grid grid;
 
     [SerializeField] private ObjectsDatabase database;
-    public int selectedObjectIndex = -1;//if it is -1 (by default) no item is selected
+    private int selectedObjectIndex = -1;//if it is -1 (by default) no item is selected
 
     [SerializeField] private GameObject gridVisualisation;
 
+    private GridData furnitureData, floorData;
+
+    private Renderer previewRender;
+
+    private List<GameObject> placedObjects = new();
     private void Start()
     {
         StopPlacement();
+        furnitureData = new ();
+        previewRender = cellIndicator.GetComponentInChildren<Renderer>();
     }
 
     public void StartPlacement(int ID)
@@ -45,14 +52,34 @@ public class PlacementSystem : MonoBehaviour
         if(inputManager.IsPointerOverUI())
         {
             return;
-        }Debug.Log("Place");
-
+        }
+        //Debug.Log("Place");
         Vector3 mouseposition = inputManager.GetSelectedMapPosition();
         Vector3Int gridPos = grid.WorldToCell(mouseposition);
+        bool placementValidity = CheckPlacementValidity(gridPos, selectedObjectIndex);
+        if (placementValidity == false)
+        {
+            return;
+        }
         GameObject newObject = Instantiate(database.objectData[selectedObjectIndex].Prefab);
-        Debug.Log(newObject);
+        //Debug.Log(newObject);
         newObject.transform.position = grid.CellToWorld(gridPos);
+        placedObjects.Add(newObject);
+        GridData selectedData = database.objectData[selectedObjectIndex].ID == 0 ? furnitureData : furnitureData;
+        selectedData.AddObjectAT(gridPos, database.objectData[selectedObjectIndex].Size, 
+                                          database.objectData[selectedObjectIndex].ID,
+                                          placedObjects.Count - 1);
+
     } //when press mouse button and over the grid going to instantiate new object place it in the position of the cell
+
+    private bool CheckPlacementValidity(Vector3Int gridPos, int selectedObjectIndex)
+    {
+        Debug.Log("Checks for floor");
+        GridData selectedData =database.objectData[selectedObjectIndex].ID == 0 ? floorData : furnitureData;////
+        //if checking if we can place furniture onto floor
+
+        return selectedData.CanPlaceObjectAt(gridPos, database.objectData[selectedObjectIndex].Size);
+    }
 
     private void StopPlacement()
     {
@@ -69,6 +96,10 @@ public class PlacementSystem : MonoBehaviour
              return; 
         Vector3 mouseposition = inputManager.GetSelectedMapPosition();
         Vector3Int gridPos = grid.WorldToCell(mouseposition);
+        
+        bool placementValidity = CheckPlacementValidity(gridPos, selectedObjectIndex);
+        previewRender.material.color = placementValidity ? Color.white : Color.red;//changes the color if true or false
+
         mouseIndicator.transform.position = mouseposition;
         cellIndicator.transform.position = grid.CellToWorld(gridPos);
     }
