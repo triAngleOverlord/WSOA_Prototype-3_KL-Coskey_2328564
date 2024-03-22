@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class InputManager : MonoBehaviour
 {
@@ -42,4 +43,9 @@ public class InputManager : MonoBehaviour
         return lastPosition;
     }//Get mouse position and translate the z coordinate onto a layer that is rendered by the camera
      //and create a ray to the position to detecct the selected position
+
+    public void ReloadHouse()
+    {
+        SceneManager.LoadScene(0);
+    }
 }
